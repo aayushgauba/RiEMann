@@ -32,7 +32,9 @@ import torch.nn as nn
 import torch.utils.checkpoint
 from dgl import DGLGraph
 from torch import Tensor
-from torch.cuda.nvtx import range as nvtx_range
+import contextlib
+@contextlib.contextmanager
+def nvtx_range(argument): yield
 
 from ....se3_transformer.model.fiber import Fiber
 from ....se3_transformer.runtime.utils import degree_to_dim, unfuse_features

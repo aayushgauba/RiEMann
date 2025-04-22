@@ -27,7 +27,9 @@ from typing import Dict
 import torch
 import torch.nn as nn
 from torch import Tensor
-from torch.cuda.nvtx import range as nvtx_range
+import contextlib
+@contextlib.contextmanager
+def nvtx_range(argument): yield
 
 from ....se3_transformer.model.fiber import Fiber
 

@@ -88,7 +88,7 @@ def load_state(model: nn.Module, optimizer: Optimizer, path: pathlib.Path, callb
 
 
 def train_epoch(model, train_dataloader, loss_fn, epoch_idx, grad_scaler, optimizer, local_rank, callbacks, args):
-    loss_acc = torch.zeros((1,), device='cuda')
+    loss_acc = torch.zeros((1,), device='cpu')
     for i, batch in tqdm(enumerate(train_dataloader), total=len(train_dataloader), unit='batch',
                          desc=f'Epoch {epoch_idx}', disable=(args.silent or local_rank != 0)):
         *inputs, target = to_cuda(batch)

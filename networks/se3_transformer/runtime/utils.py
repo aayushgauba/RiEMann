@@ -65,18 +65,21 @@ def str2bool(v: Union[bool, str]) -> bool:
 
 
 def to_cuda(x):
-    """ Try to convert a Tensor, a collection of Tensors or a DGLGraph to CUDA """
+    """Safely convert a Tensor, collection of Tensors, or DGLGraph to CUDA if available, else stays on CPU."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if isinstance(x, Tensor):
-        return x.cuda(non_blocking=True)
+        return x.to(device, non_blocking=True)
     elif isinstance(x, tuple):
-        return (to_cuda(v) for v in x)
+        return tuple(to_cuda(v) for v in x)
     elif isinstance(x, list):
         return [to_cuda(v) for v in x]
     elif isinstance(x, dict):
         return {k: to_cuda(v) for k, v in x.items()}
     else:
-        # DGLGraph or other objects
-        return x.to(device=torch.cuda.current_device(), non_blocking=True)
+        try:
+            return x.to(device=device, non_blocking=True)  # for DGLGraph or similar
+        except AttributeError:
+            return x  # if .to() is not defined
 
 
 def get_local_rank() -> int:
